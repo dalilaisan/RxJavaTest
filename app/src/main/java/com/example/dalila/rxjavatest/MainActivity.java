@@ -36,11 +36,11 @@ public class MainActivity extends AppCompatActivity {
                         /*freezing the background thread (the thread the work is being
                         done on - Schedulers.io() in subscribeOn())
                         */
-                        try {
+                        /*try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
-                        }
+                        }*/
                         //only show tasks that are complete
                         return task.isComplete();
                     }
