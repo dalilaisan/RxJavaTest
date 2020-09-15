@@ -7,12 +7,19 @@ import android.util.Log;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Predicate;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+
+    /*
+    a disposable helps to keep track of all the observers we are
+    using and how to clean them up when we no longer need them
+    */
+    protected CompositeDisposable disposables = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
             //called as soon as the observer's subscribed to
             public void onSubscribe(Disposable d) {
                 Log.d(TAG, "onSubscribe: called");
+                disposables.add(d);
             }
 
             @Override
@@ -66,5 +74,14 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "onComplete: called");
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //clear() will remove all the subscribers/observers without disabling the observable
+        disposables.clear();
+        //dispose() will no longer allow anything to subscribe to the observable that was observed - hard clear
+        //disposables.dispose();
     }
 }
